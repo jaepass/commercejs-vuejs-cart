@@ -28,7 +28,7 @@ export default {
 
 <style lang="scss">
 .products {
-  @apply block m-24;
+  @apply block m-40;
 
   @screen md {
     @apply grid grid-cols-3 grid-rows-3; 
