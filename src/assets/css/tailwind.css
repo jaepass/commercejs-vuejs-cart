@@ -1,0 +1,44 @@
+@tailwind base;
+
+body {
+    @apply antialiased bg-beige tracking-wider;
+  }
+  
+  h1,
+  h2,
+  h3,
+  h4,
+  p {
+    @apply font-lato;
+  }
+  
+  p {
+    @apply leading-relaxed;
+  }
+  
+  h1 {
+    @apply text-4xl;
+  }
+  
+  h2 {
+    @apply text-3xl;
+  }
+  
+  h3 {
+    @apply text-xl font-bold tracking-widest;
+  }
+  
+  h4 {
+    @apply text-xl;
+  }
+  
+  h5 {
+    @apply text-xl;
+  }
+
+  p {
+    @apply text-sm;
+  }
+
+@tailwind components;
+@tailwind utilities;
