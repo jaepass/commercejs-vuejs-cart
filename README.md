@@ -460,6 +460,7 @@ returned products data as the value.
 </template>
 ```
 
+Awesome, you've just wrapped up on creating a products listing page using Commerce.js and Vue.js! This guide is the first part in a full Vue.js series. The next guide will walk you through on how to add cart functionalities to your application.
 
 
 
