@@ -6,12 +6,17 @@ import './assets/css/tailwind.css';
 import Commerce from '@chec/commerce.js';
 
 const commerce = (typeof process.env.VUE_APP_CHEC_PUBLIC_KEY !== 'undefined')
-  ? new Commerce(process.env.VUE_APP_CHEC_PUBLIC_KEY, true)
+  ? new Commerce(process.env.VUE_APP_CHEC_PUBLIC_KEY)
   : null;
 
-Vue.config.productionTip = false
+Vue.mixin({
+  beforeCreate() {
+    this.$commerce = commerce
+  }
+});
+
+Vue.config.productionTip = false;
 
 new Vue({
-  render: h => h(App,
-    { props: { commerce } }),
+  render: h => h(App),
 }).$mount('#app');

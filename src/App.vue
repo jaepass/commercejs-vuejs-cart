@@ -10,12 +10,6 @@ export default {
   components: {
     ProductsList,
   },
-  props: {
-    commerce: {
-      required: true,
-      type: Object,
-    }
-  },
   data() {
     return {
       products: [],
@@ -32,7 +26,7 @@ export default {
      * @return {object} products data object
      */
     fetchProducts() {
-      this.commerce.products.list().then((products) => {
+      this.$commerce.products.list().then((products) => {
         this.products = products.data;
       }).catch((error) => {
         console.log('There is an error fetching products', error);
