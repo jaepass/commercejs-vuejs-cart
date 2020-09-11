@@ -3,6 +3,8 @@
 This is a guide on creating a product listing page using Commerce.js and Vue.js. Commerce.js SDK v2 will be used in this
 project.
 
+[See live demo](https://commercejs-vuejs-products.netlify.app/)
+
 ## Overview
 
 The goal of this guide is to walk you through creating a simple storefront displaying a list of products with
@@ -30,15 +32,14 @@ This project assumes you have some knowledge of the below concepts before starti
 
 ## Some things to note:
 
-- We will not be going over Vue.js extensively but instead brush over high level concepts of Vue.js and focus on the
+- We will not be going over Vue.js extensively but instead brush over high level concepts of Vue.js and keep our focus on the
   Commerce.js layer.
-- For the purposes of getting set up with products data, we will be providing you with demo merchant [public
+- For the purposes of getting set up with products data to start working with, we will be providing you with demo merchant [public
   key](https://commercejs.com/docs/sdk/concepts#authentication).
 - We will not be going over account or dashboard setup. Have a read
   [here](https://commercejs.com/docs/sdk/getting-started#account-setup) if you'd like to learn more about setting up a
   Chec account.
-- The project is using the CSS utility framework TailwindCSS. Because of the purposes of this guide, we will not be
-  going over any styling details.
+- This application is using the CSS utility framework TailwindCSS. Because the main goal of this guide to to learn how to list products with Commerce.js, we will not be going over any styling details.
 
 ## Initial setup
 
@@ -46,11 +47,11 @@ This project assumes you have some knowledge of the below concepts before starti
 
 To quickly create a Vue.js project, install the Vue CLI globally in your terminal:
 
-  ```bash
-  yarn add -g @vue/cli
-  # OR #
-  npm install -g @vue/cli
-  ```
+```bash
+yarn add -g @vue/cli
+# OR
+npm install -g @vue/cli
+```
 
 To create a new project, run:
 
@@ -82,30 +83,29 @@ VUE_APP_CHEC_PUBLIC_KEY=pk_184625ed86f36703d7d233bcf6d519a4f9398f20048ec
 ### 4. Start your local HTTP server and run your development environment:
 ```bash
 yarn serve
-# OR #
+# OR
 npm run serve
 ```
 
-## Configure Commerce.js
+## Add Commerce.js to the application
 
 ### 1. Install Commerce.js
 
 In order to communicate with the Chec API and fetch data from the backend, we need to install the Commerce.js SDK. The
 Commerce.js SDK can be installed via CDN by including `<script type="text/javascript"
 src="https://assets.chec-cdn.com/v2/commerce.js"></script> in your `index.html` file or installed with a package
-manager:
+manager (recommended):
 
 ```bash
 yarn add @chec/commerce.js
-# OR #
+# OR
 npm install @chec/commerce.js
 ```
 
 ### 2. Create a Commerce.js instance
 
 To have access to the `chec/commerce.js` that we have just installed, we need to create a new instance to be able to use
-it throughout our application. In the `main.js` file is where new instances we created in Vue. Open your `main.js` file
-and input the following in:
+it throughout our application. Open your `main.js` file and input the following in:
 
 ```js
 // Import the Commerce object
@@ -118,7 +118,7 @@ const commerce = (typeof process.env.VUE_APP_CHEC_PUBLIC_KEY !== 'undefined')
 ```
 
 What we have done above is we first imported our `Commerce` object, then we created a new Commerce instance by passing
-in and processing our environment variable `VUE_APP_CHEC_PUBLIC_KEY` as the first argument. The ternary operator first
+in and processing our environment variable `VUE_APP_CHEC_PUBLIC_KEY` as an argument. The ternary operator first
 checks whether a public key is set at the environment variable we define and if it does, we then create our new Commerce
 instance and store it in a variable called `commerce`.
 
@@ -143,8 +143,8 @@ application's components.
 
 ## Build application
 
-Now that we done our initial setup and make the `commerce` object available to be used through our application, let's
-get started with building the the products listing page.
+Now that we have done our initial setup and make the `commerce` object available to be used in our application, let's
+get started with building the products listing page.
 
 1. ### Fetch our products data
 
@@ -170,7 +170,7 @@ export default {
 ```
 
 Before we make our first call to list out our products data, we need to declare products as an empty array in our app
-component's initial state to be able to store the returned products data object. Underneath the name property, use the
+component's initial state to be able to store the returned products data. Underneath the name property, use the
 data function to declare products state:
 
 ```js
@@ -309,13 +309,13 @@ tab. An abbreviated return data object should look like the below:
 ]
 ```
 
-Now with the product data object available, we can use the various endpoints to render out in elements in our template.
+Now with the product data object available, we can use the various endpoints to render out in our template.
 
 1. ### Create our product item component
 
 Because of the nature of Vue and most modern frameworks, components are a way to encapsulate a group of elements
 together to reuse as custom components throughout your application. We will be creating two components for our products,
-one will be our single product item and another to render out the list of product items.
+one will be our single product item and another for he list of product items.
 
 In `src/components`, lets first create a new file and name it `ProductItem.vue`. In this component file, lets start by
 naming our component and defining a product prop in the script tag:
@@ -349,9 +349,9 @@ we will use the template element to render out the product image, product name, 
 ```
 
 As you saw earlier in the abbreviated json, the returned products data object comes with all the property endpoints you
-need to build out our products listing view. In the code snippet above, we use our `product` prop to access the various
+need to build out a products listing view. In the code snippet above, we use our `product` prop to access the various
 property endpoints. First, we render out an image tag with the `src` value of `product.media.source`. The semicolon is a
-shortform of v-bind that will dynamically parse the value of `product.media.src`, in which case is the image url.
+shortform of the v-bind directive that will dynamically parse the value of `product.media.src`, in which case is the image url.
 Followed by `product.name`, `product.description` and `product.price.formatted_with_symbol`. All these elements follow
 the same pattern of accessing the property endpoints from the product prop. One thing to note is the description tag:
 The description property is returned with paragraph tags, which is an expected behaviour. The field in which the
