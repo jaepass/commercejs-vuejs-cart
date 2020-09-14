@@ -3,7 +3,7 @@
 This is a guide on adding cart functionality to our Vue.js application using Commerce.js. This is a continuation from
 the previous guide on creating a product listing page.
 
-[See live demo]()
+[See live demo](https://commercejs-vuejs-cart.netlify.app/)
 
 ## Overview
 
@@ -231,9 +231,9 @@ handleAddToCart({ productId, quantity }) {
 }
 ```
 
-We make a call the the `commerce.cart.add` endpoint passing in the neccessary data and when the promise resolves, the
-cart object should return with the appropriate added product details. Upon a successful post request to add a product to
-cart, you should see the below abbreviated response:
+We make a call to the `commerce.cart.add` endpoint passing in the neccessary data and when the promise resolves, the
+cart object should return with the appropriate added product details. Upon a successful post request to add a new product to
+cart, you should see the below abbreviated response with a new line item in the cart object:
 
 ```json
 {
@@ -303,9 +303,68 @@ a list of added items.
 
 ### 3. Create a cart component
 
-First start by creating a cart item component in your components folder. We want to follow the same pattern to try to
+First, let's start by creating a cart item component in the components folder. We want to follow the same pattern to try to
 encapsulate small components to be consumed by bigger components. This way we continue to keep our application dry as
-well and keeps our logic separate.
+well and keep our logic separated and clean.
+
+In our components folder, we'll create a `CartItem.vue` which will render each line item details such as the item image, name, price and quantity. First between our script tag, let's name our component and define an `item` prop:
+
+```js
+export default {
+    name: 'CartItem',
+    props: ['item'],
+}
+```
+
+Then in our template, we will bind the necessary data to eventually parse the values when the cart component renders.
+
+```html
+<!-- CartItem.vue -->
+
+<template>
+    <div class="cart-item">
+        <img class="cart-item__image" :src="item.media.source" />
+        <div class="cart-item__details">
+            <h4 class="cart-item__details-name">{{ item.name }}</h4>
+            <div class="cart-item__details-qty">
+              <p>{{ item.quantity }}</p>
+            </div>
+            <p class="cart-item__details-price">{{ item.line_total.formatted_with_symbol }}</p>
+        </div>
+    </div>
+</template>
+```
+
+Next, let's create the main `Cart.vue` component. Once again, we will name our component, define a cart prop and import and register our child cart component `CartItem.vue` within our script tag.
+
+```js
+// Cart.vue
+
+import CartItem from './CartItem';
+
+export default {
+    name: 'Cart',
+    components: {
+        CartItem,
+    },
+    props: ['cart'],
+}
+```
+
+Within our template tags, we will render our `CartItem.vue` component that we registered and pass in the neccessary prop attributes.
+
+```html
+<!-- Cart.vue -->
+
+<CartItem
+  v-for="lineItem in cart.line_items"
+  :key="lineItem.id"
+  :item="lineItem"
+  class="cart__inner"
+/>
+```
+
+Similar to how we have rendered out a list of products in the previous guide, we will loop through each of the cart items and render out each line item details. The `v-for` directive will render our each `lineItem` in the `cart.line_items` array and parse out the data that was bound from the `CartItem.vue` component
 
 ### 4. Update cart items
 
