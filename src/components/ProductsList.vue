@@ -4,6 +4,7 @@
       v-for="product in products"
       :key="product.id"
       :product="product"
+      @add-to-cart="$emit('add-to-cart', $event)"
       class="products__item"
     />
   </div>
@@ -28,10 +29,10 @@ export default {
 
 <style lang="scss">
 .products {
-  @apply block m-40;
+  @apply block m-12;
 
   @screen md {
-    @apply grid grid-cols-3 grid-rows-3; 
+    @apply grid grid-cols-3 grid-rows-3 m-40; 
   }
 }
 

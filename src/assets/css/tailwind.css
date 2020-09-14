@@ -33,7 +33,7 @@ body {
   }
   
   h5 {
-    @apply text-xl;
+    @apply text-lg;
   }
 
   p {

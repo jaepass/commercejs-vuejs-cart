@@ -1,22 +1,37 @@
 <template>
-  <ProductsList :products="products"/>
+  <div>
+    <Cart
+      :cart="cart"
+      :showCart="showCart"
+      @remove-from-cart="handleRemoveFromCart"
+      @empty-cart="handleEmptyCart"
+    />
+    <ProductsList
+      :products="products"
+      @add-to-cart="handleAddToCart"
+    />
+  </div>
 </template>
 
 <script>
 import ProductsList from './components/ProductsList';
+import Cart from './components/Cart';
 
 export default {
   name: 'app',
   components: {
     ProductsList,
+    Cart,
   },
   data() {
     return {
       products: [],
+      cart: null,
     }
   },
   created() {
     this.fetchProducts();
+    this.fetchCart();
   },
   methods: {
     /**
@@ -32,6 +47,63 @@ export default {
         console.log('There is an error fetching products', error);
       });
     },
-  },
+    /**
+     * Retrieve the current cart or create one if one does not exist
+     * https://commercejs.com/docs/sdk/cart
+     * 
+     * @return {object} cart object
+     */
+    fetchCart() {
+      this.$commerce.cart.retrieve().then((cart) => {
+        this.cart = cart
+      }).catch((error) => {
+        console.log('There is an error fetching the cart', error);
+      });
+    },
+    /**
+     * Adds a product to the current cart in session
+     * https://commercejs.com/docs/sdk/cart/#add-to-cart
+     * 
+     * @param {string} id of the product being added
+     * @param {number} quantity of the product being added 
+     * 
+     * @return {object} updated cart object with new line items
+     */ 
+    handleAddToCart({ productId, quantity }) {
+      this.$commerce.cart.add(productId, quantity).then((resp) => {
+        this.cart = resp.cart;
+      }).catch((error) => {
+        console.log('There is an error fetching the cart', error);
+      });
+    },
+    /**
+     * Removes line item from cart
+     * https://commercejs.com/docs/sdk/cart/#remove-from-cart
+     * 
+     * @param {string} id of the cart line item being removed
+     * 
+     * @return {object} updated cart object
+     */ 
+    handleRemoveFromCart(lineItemId) {
+      this.$commerce.cart.remove(lineItemId).then((resp) => {
+        this.cart = resp.cart;
+      }).catch((error) => {
+        console.log('There is an error updating the cart items', error);
+      });
+    },
+    /**
+     * Empties cart contents
+     * https://commercejs.com/docs/sdk/cart/#remove-from-cart
+   
+     * @return {object} updated cart object
+     */ 
+    handleEmptyCart() {
+      this.$commerce.cart.empty().then((resp) => {
+        this.cart = resp.cart;
+      }).catch((error) => {
+        console.log('There is an error clearing your cart', error);
+      });
+    }
+  }
 };
 </script>
