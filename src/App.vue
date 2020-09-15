@@ -44,7 +44,7 @@ export default {
       this.$commerce.products.list().then((products) => {
         this.products = products.data;
       }).catch((error) => {
-        console.log('There is an error fetching products', error);
+        console.log('There was an error fetching products', error);
       });
     },
     /**
@@ -57,7 +57,7 @@ export default {
       this.$commerce.cart.retrieve().then((cart) => {
         this.cart = cart
       }).catch((error) => {
-        console.log('There is an error fetching the cart', error);
+        console.log('There was an error fetching the cart', error);
       });
     },
     /**
@@ -73,7 +73,7 @@ export default {
       this.$commerce.cart.add(productId, quantity).then((resp) => {
         this.cart = resp.cart;
       }).catch((error) => {
-        console.log('There is an error fetching the cart', error);
+        console.log('There was an error fetching the cart', error);
       });
     },
     /**
@@ -88,7 +88,7 @@ export default {
       this.$commerce.cart.remove(lineItemId).then((resp) => {
         this.cart = resp.cart;
       }).catch((error) => {
-        console.log('There is an error updating the cart items', error);
+        console.log('There was an error updating the cart items', error);
       });
     },
     /**
@@ -101,7 +101,7 @@ export default {
       this.$commerce.cart.empty().then((resp) => {
         this.cart = resp.cart;
       }).catch((error) => {
-        console.log('There is an error clearing your cart', error);
+        console.log('There was an error clearing your cart', error);
       });
     }
   }

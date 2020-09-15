@@ -52,9 +52,9 @@ export default {
          */ 
         handleUpdateQuantity(lineItemId, quantity) {
             this.$commerce.cart.update(lineItemId, { quantity }).then((resp) => {
-                this.cart = resp.cart;
+                this.cart = resp.cart
             }).catch((error) => {
-                console.log('There is an error updating the cart items', error);
+                console.log('There was an error updating the cart items', error);
             });
         },
         emptyCart() {
