@@ -22,7 +22,7 @@
             </div>
             <button
                 v-if="cart.line_items.length"
-                @click="emptyCart()"
+                @click="emptyCart"
                 class="cart__btn-empty"
             >
                 Empty cart
@@ -51,10 +51,8 @@ export default {
          * Updates line_items in cart
          * https://commercejs.com/docs/sdk/cart/#update-cart
          * 
-         * @param {string} id of the cart line item being updated
-         * @param {number} new line item quantity to update
-         * 
-         * @return {object} updated cart object
+         * @param {string} lineItemId ID of the cart line item being updated
+         * @param {number} quantity New line item quantity to update
          */ 
         handleUpdateQuantity(lineItemId, quantity) {
             this.$commerce.cart.update(lineItemId, { quantity }).then((resp) => {
@@ -63,6 +61,10 @@ export default {
                 console.log('There was an error updating the cart items', error);
             });
         },
+        /**
+         * Empty the entire cart
+         * https://commercejs.com/docs/sdk/cart#empty-cart
+         */
         emptyCart() {
             this.$emit('empty-cart');
         },
