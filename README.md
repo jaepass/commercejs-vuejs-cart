@@ -1,6 +1,6 @@
 # Commerce.js Vue.js Cart
 
-This is a guide on adding cart functionality to your Vue.js application using Commerce.js. This is a continuation from
+This is a guide on adding cart functionality to our Vue.js application using Commerce.js. This is a continuation from
 the previous guide on creating a product listing page.
 
 [See live demo](https://commercejs-vuejs-cart.netlify.app/)
@@ -8,21 +8,21 @@ the previous guide on creating a product listing page.
 ## Overview
 
 The goal of this guide is to add cart functionality to our products page with the ability to add items to our cart,
-increase or decrease the item quantity, and also clear all items from the cart. Below are what we plan on
-accomplishing with this guide:
+increase or decrease the items, and also clear items from the cart. Below are what we plan on accomplishing with this
+guide:
 
 1. Retrieve and/or create a cart in our application
 2. Add products to cart
 3. Update line items in cart
 4. Remove line items from cart
-5. Empty cart
+5. Empty cart contents
 
 ## Requirements
 
 What you will need to start this project:
 
-- An IDE/code editor
-- NodeJS, at least v8
+- An IDE or code editor
+- NodeJS, at least v8/10
 - npm or yarn
 - Vue.js devtools (recommended)
 
@@ -36,8 +36,8 @@ This project assumes you have some knowledge of the below concepts before starti
 
 ## Some things to note:
 
-- The purpose of this guide is to focus on the Commerce.js layer and using Vue.js to build out the application. Therefore,
-  we will not be going over any styling details.
+- The purpose of this guide is to focus on the Commerce.js layer and using Vue.js to build out the application
+  therefore, we will not be going over any styling details.
 - The cart application code is available in the GitHub repo along with all styling details.
 
 ## Add cart functionality
@@ -45,9 +45,8 @@ This project assumes you have some knowledge of the below concepts before starti
 The [cart](https://commercejs.com/docs/sdk/cart/) resource in Chec comes equipped with multiple intuitive endpoints to
 help develop a seamless shopping cart experience using Commerce.js. We will be interacting with the cart endpoint in
 multiple components in our application:
-
-- In our product listing page where we can add items to cart
-- The cart component where we will be rendering, updating, removing, and clearing the cart items.
+- In our product listing page where we can add items to cartn the cart component where we will be rendering, updating,
+  removing, and clearing the cart items.
 
 ### 1. Retrieve cart
 
@@ -68,12 +67,10 @@ data() {
 
 Next, we'll need to retrieve our current cart in session with the `cart.retrieve()`
 [method](https://commercejs.com/docs/sdk/cart#retrieve-cart). Commerce.js automatically creates a cart for you if one
-does not exist in the current browser session. Commerce.js tracks the current cart ID in a cookie so it persists across
-browser sessions. The cart is being handled client-side as we want to utilize cookie sessions to store the
-cart data.
-
-For instance, a user is shopping on a commerce website and starts to add cart items, they leave the
-website and return again, the expected behaviour would be that the cart data would persist and cart items still remain.
+does not exist in the current browser session. Commerce.js tracks the current cart id with a cookie and stores the
+entire cart and its contents. The cart is being handled clientside as we want to utilize cookie sessions to store the
+cart data. For instance, a user is shopping on a commerce website and starts to add cart items, he/she leaves the
+website and returns again, the expected behaviour would be that the cart data would persist and cart items still remain.
 With the Cart API endpoint and cart functionality methods in Commerce.js, the otherwise complex cart logic on commerce
 websites can be easily implemented. Now let's go ahead and add a new cart method underneath `fetchProducts()`.
 
@@ -83,6 +80,8 @@ websites can be easily implemented. Now let's go ahead and add a new cart method
 /**
  * Retrieve the current cart or create one if one does not exist
  * https://commercejs.com/docs/sdk/products
+ * 
+ * @return {object} cart object
  */
 fetchCart() {
   this.$commerce.cart.retrieve().then((cart) => {
@@ -138,9 +137,9 @@ object response below:
 
 ### 2. Add to cart
 
-In Commerce.js, one of the main cart methods is [add to cart](https://commercejs.com/docs/sdk/cart/#add-to-cart).
+In Commerce.js, one of the main cart methods is the [add to cart](https://commercejs.com/docs/sdk/cart/#add-to-cart).
 This method will call the `POST v1/carts/{cart_id}` Cart API endpoint. Now with our cart object response, we can start
-to interact with it and add the necessary event handlers to handle our cart functionality. Similar to how you can pass
+to interact with and add the necessary event handlers to handle our cart functionalities. Similar to how you can pass
 props as custom attributes, we can do that with native and custom events. Because we will need to display a button to
 handle our add to cart functionality, lets go back to the `ProductItem.vue` component to add that in the product card.
 The built-in `v-on` directive has a click event `v-on:click` which we can write as a shortform `@click` in Vue.js. We
@@ -151,23 +150,22 @@ event, a button click in this case. We will name our custom callback function `a
 <!-- ProductItem.vue -->
 
 <button
-  type="button"
   class="product__btn"
-  @click="addToCart"
+  @click="addToCart()"
 >
   Quick add
 </button>
 ```
 
 In Vue.js, data being passed down from a parent component to a child component is called props. When a child component
-needs to pass data or propagate an event upstream to its parent, it's called emitting. After attaching a click event in
-our **Quick add** button to call the `addToCart()` event handler, we will need to emit this event to the parent
+needs to pass data or propagate an event upstream to its parent, its called emitting. After attaching a click event in
+our **Quick add** button to call the `addToCart()` event handler, we will need to emit this logic to the next parent
 component. At this stage the application is still fairly small so sharing data between components via props and events
 is manageable. As your application scales, we will need to handle the application state and events with a state
 management layer like Vuex.
 
-Getting back to our `ProductItem.vue` component in our methods property, let's attach our event handler logic. The
-first argument we need to pass into the `$emit()` function is the event name we want the parent component to listen to and
+Getting back to our `ProductItem.vue` component in our methods property, let's attach our event handler's logic. The
+first argument we need to pass into the `$emit()` function is the event we want the parent component to listen to and
 additionally any data we are passing up. In order for Commerce.js to handle adding of items into the cart, we will need
 to pass in the product ID and the quantity of that product.
 
@@ -192,13 +190,13 @@ event `@add-to-cart` that we created to continue to emit the event back up to ou
   v-for="product in products"
   :key="product.id"
   :product="product"
-  @add-to-cart="() => $emit('add-to-cart', $event)"
+  @add-to-cart="$emit('add-to-cart', $event)"
   class="products__item"
 />
 ```
 
-Finally in the outer most component `App.js`, we attach our callback `handleAddToCart()` to the `add-to-cart` event. This
-callback is where we will be making the cart request to the Chec API.
+Finally in the outer most component `App.js`, we pass in our callback `add-to-cart` as an event and attach a
+`handleAddToCart()` method where we will be making the cart request to the Chec API.
 
 ```html
 <!-- App.js -->
@@ -211,10 +209,10 @@ callback is where we will be making the cart request to the Chec API.
 </template>
 ```
 
-The data `productId` and `quantity` that were emitted from the `ProductItem` component will be received in the handling
+The data `productID` and `quantity` that were emitted from the `ProductItem` component will be received in the handling
 method. Let's go ahead and create the helper handling method and call it `handleAddToCart()`. As mentioned, we will need
-to pass in the required parameters `productId` and `quantity` of the product. We can destructure the variables we need
-from the event's arguments.
+to pass in the required parameters `productID` and `quantity` of the product item. We destructure the variables as these
+will be properties that will resolve into the cart object.
 
 ```js
 /**
@@ -223,6 +221,8 @@ from the event's arguments.
  * 
  * @param {string} productId of the product being added
  * @param {number} quantity of the product being added 
+ * 
+ * @return {object} updated cart object with new line items
  */ 
 handleAddToCart({ productId, quantity }) {
   this.$commerce.cart.add(productId, quantity).then((resp) => {
@@ -234,8 +234,8 @@ handleAddToCart({ productId, quantity }) {
 ```
 
 We make a call to the `commerce.cart.add` endpoint passing in the neccessary data and when the promise resolves, the
-cart object should return with the appropriate added product details. Upon a successful post request to add a new product to
-cart, you should see the below abbreviated response with a new line item in the cart object:
+cart object should return with the appropriate added product details. Upon a successful post request to add a new
+product to cart, you should see the below abbreviated response with a new line item in the cart object:
 
 ```json
 {
@@ -299,18 +299,18 @@ cart, you should see the below abbreviated response with a new line item in the 
 }
 ```
 
-In the JSON response you can see that the added product is now given associated `line_items` details such as its
-`line_item_id`, and `line_total`. With this data we can now create our cart component and render out cart details like
+In the json response, you can note that the added product is now given associated `line_items` details such as its
+`line_item_id`, and `line_total`. With this data, we can now create our cart component and render out cart details like
 a list of added items.
 
 ### 3. Create a cart component
 
-First, let's start by creating a cart item component in the components folder. We want to follow the same pattern to try to
-encapsulate small components to be consumed by bigger components. This way we continue to keep our application DRY as
-well as keeping our logic clean and separated.
+First, let's start by creating a cart item component in the components folder. We want to follow the same pattern to try
+to encapsulate small components to be consumed by bigger components. This way we continue to keep our application dry as
+well and keep our logic separated and clean.
 
-In our components folder we'll create a `CartItem.vue` which will render each line item's details such as the item image,
-name, price, and quantity. First, inside our script tag let's name our component and define an `item` prop:
+In our components folder, we'll create a `CartItem.vue` which will render each line item details such as the item image,
+name, price and quantity. First between our script tag, let's name our component and define an `item` prop:
 
 ```js
 export default {
@@ -319,7 +319,7 @@ export default {
 }
 ```
 
-Then in our template we will bind the necessary data to eventually parse the values when the cart component renders.
+Then in our template, we will bind the necessary data to eventually parse the values when the cart component renders.
 
 ```html
 <!-- CartItem.vue -->
@@ -338,7 +338,8 @@ Then in our template we will bind the necessary data to eventually parse the val
 </template>
 ```
 
-Next, let's create the main `Cart.vue` component. Once again, we will name our component, define a cart prop and import and register our child cart component `CartItem.vue` inside our script tag.
+Next, let's create the main `Cart.vue` component. Once again, we will name our component, define a cart prop and import
+and register our child cart component `CartItem.vue` within our script tag.
 
 ```js
 // Cart.vue
@@ -354,7 +355,8 @@ export default {
 }
 ```
 
-Inside our template tag, we will render our `CartItem.vue` component that we registered and pass in the neccessary props.
+Within our template tags, we will render our `CartItem.vue` component that we registered and pass in the neccessary prop
+attributes.
 
 ```html
 <!-- Cart.vue -->
@@ -367,9 +369,12 @@ Inside our template tag, we will render our `CartItem.vue` component that we reg
 />
 ```
 
-Similar to how we rendered a list of products in the previous guide, we will loop through each of the cart items and render each line item's details. The `v-for` directive will render each `lineItem` in the `cart.line_items` array, and parse the data that was declaratively bound to the `CartItem.vue` component.
+Similar to how we have rendered out a list of products in the previous guide, we will loop through each of the cart
+items and render out each line item details. The `v-for` directive will render our each `lineItem` in the
+`cart.line_items` array and parse out the data that was declaratively bound in the `CartItem.vue` component.
 
-For the main cart component to render in our application, we will also need to call the cart component instance in `App.js` and pass in the cart prop.
+For the main cart component to render in our application, we will also need to call the cart component instance in
+`App.js` and pass in the cart prop.
 
 ```html
 <!-- App.js -->
@@ -379,11 +384,15 @@ For the main cart component to render in our application, we will also need to c
 />
 ```
 
-At this stage, you should be able to see a minimal cart component rendered out in your main application view. Let's continue to add more cart functionality and build out a more detailed cart interface.
+At this stage, you should be able to see a minimal cart component rendered out in your main application view. Let's
+continue to add more cart functionalities and build out a more detailed cart interface.
 
 ### 4. Update cart items
 
-Going back to the `CartItem.vue` component, we will now start to implement the first cart line item action using the Commerce.js [method](https://commercejs.com/docs/sdk/cart#update-cart) `commerce.cart.update()`. This request uses the `PUT v1/carts/{cart_id}/items/{line_item_id}` endpoint to update the quantity or variant for the line item ID in the cart. For this guide, we will only be working with the main variant for the product.
+Going back to the `CartItem.vue` component, we will now start to implement the first cart line item action using the
+Commerce.js [method](https://commercejs.com/docs/sdk/cart#update-cart) `commerce.cart.update()`. This request uses the
+`PUT v1/carts/{cart_id}/items/{line_item_id}` endpoint to update the quantity or variant for the line item ID in the
+cart. For this guide, we will only be working with the main variant of the product item.
 
 Let's add a new method in our `CartItem.vue` component to pass up to the parent `Cart.vue` component.
 
@@ -397,9 +406,14 @@ methods: {
 }
 ```
 
-Above, we created a helper function `updateQuantity()` to update the line item quantity in the cart object. We will emit this event the same way by passing in the event name `update-quantity` we want the parent component to listen out for. The other required arguments we need to propagate up are the `item.id` and the new quantity for the line item we are updating.
+Above, we created a helper function `updateQuantity()` to update the line item quantity in the cart object. We will
+handle the emitting of this event the same way by passing in the event `update-quantity` we want the parent component to
+listen out for. The other required arguments we need to propagate up is the `item.id` and the new quantity of the line
+item we are updating.
 
-Going back up to our template still in `CartItem.vue`, let's hook up our `update-quantity` event. Between the item quantity element, we want to attach our custom `updateQuantity` method to button click events. On the first button, we will attach a click event handler to decrease the line item quantity by 1 and on the second button to increase it by 1.
+Going back up to our template still in `CartItem.vue`, let's hook up our `update-quantity` event. Between the item
+quantity element, we want to attach our custom `updateQuantity` method to button click events. In the first button, we
+will implement a click event to decrease the line item quantity by 1 and in the second button to increase it by 1.
 
 ```html
 <!-- CartItem.vue -->
@@ -410,9 +424,9 @@ Going back up to our template still in `CartItem.vue`, let's hook up our `update
     <div class="cart-item__details">
       <h4 class="cart-item__details-name">{{ item.name }}</h4>
       <div class="cart-item__details-qty">
-        <button type="button" @click="() => updateQuantity(item.quantity - 1)">-</button>
+        <button @click="() => updateQuantity(item.quantity - 1)">-</button>
         <p>{{ item.quantity }}</p>
-        <button type="button" @click="() => updateQuantity(item.quantity + 1)">+</button>
+        <button @click="() => updateQuantity(item.quantity + 1)">+</button>
       </div>
       <p class="cart-item__details-price">{{ item.line_total.formatted_with_symbol }}</p>
     </div>
@@ -420,9 +434,12 @@ Going back up to our template still in `CartItem.vue`, let's hook up our `update
 </template>
 ```
 
-As you can see, when the click event fires it will call the `updateQuantity()` method attached to it with the quantity of the item decreased or increased by 1. These click events will emit the `update-quantity` event to the parent `Cart.vue` component and will pass the required data.
+As you can see, when the click event fires, it will call the `updateQuantity()` method passed into it with the quantity
+of the item decreased or increased by 1. These click events will emit the `updateQuantity()` to the parent `Cart.vue`
+component passing in the required data.
 
-For the parent component to handle the emitted event, we need to create an event handler to handle updating the line item quantity.
+For the parent component to handle the event being propagated up, we need to create an event handler to handle updating
+of the line item quantity.
 
 ```js
 // Cart.vue
@@ -432,8 +449,10 @@ methods: {
    * Updates line_items in cart
    * https://commercejs.com/docs/sdk/cart/#update-cart
    *  
-   * @param {string} lineItemId ID of the cart line item being updated
-   * @param {number} quantity New quantity for the line item to update
+   * @param {string} id of the cart line item being updated
+   * @param {number} quantity (new) of the line item to update
+   * 
+   * @return {object} updated cart object
    */ 
   handleUpdateQuantity(lineItemId, quantity) {
     this.$commerce.cart.update(lineItemId, { quantity }).then((resp) => {
@@ -445,7 +464,10 @@ methods: {
 }
 ```
 
-In this helper handler function we call the `commerce.cart.update()` endpoint with `lineItemId` and destructured `quantity`. When we fire the `updateQuantity()` method in our `CartItem.vue` component, this event handler will run and respond with the updated line item data with the new quantity. We'll also need to bind the handler to the `CartItem.vue` component.
+In this helper handler function, we will calling the `commerce.cart.update()` endpoint with `lineItemId` and
+destructured `quantity`. When we fire the `updateQuantity()` button in our `CartItem.vue` component, this event handler
+will run and response with the line item updated with the new quantity. We'll also need to bind the handler to the
+`CartItem.vue` component.
 
 ```html
 <!-- Cart.vue -->
@@ -459,7 +481,7 @@ In this helper handler function we call the `commerce.cart.update()` endpoint wi
 />
 ```
 
-Upon a successful request you should receive a response similar to the below abbreviated data:
+ Upon a successful request, you should receive a response similar to the below abbreviated data:
 
 ```json
 {
@@ -530,28 +552,43 @@ Upon a successful request you should receive a response similar to the below abb
 
 ### 5. Remove items from cart
 
-Now that we have the ability to update the quantity of individual line items in our cart, we might also want the flexibility of being able to completely remove that line item from the cart. The Commerce.js `commerce.cart.remove()` [method](https://commercejs.com/docs/sdk/cart#remove-from-cart) helps to remove a specific line item from the cart object.
+Now that we have the ability to update the quantity of individual line items in your cart, you might also want the
+flexibility of being able to completely remove that line item from your cart. The Commerce.js `commerce.cart.remove()`
+[method](https://commercejs.com/docs/sdk/cart#remove-from-cart) helps to remove a specific line item from your cart
+object.
 
-Let's go back to our `CartItem.vue` component to add the "remove item from cart" logic. Underneath the previously added `updateQuantity()` function, let's now add a new method and call it `removeFromCart()`. 
+Let's go back to our `CartItem.vue` component to add the remove item from cart logic. Underneath the previously added
+`updateQuantity()` function, let's first add a helper method and call it `removeFromCart()`. 
 
 ```js
 // CartItem.vue
 
 methods: {
-  updateQuantity(quantity) {
-    this.$emit('update-quantity', this.item.id, quantity);
-  },
   removeFromCart() {
     this.$emit('remove-from-cart', this.item.id);
   }
 }
 ```
 
-Once again, we will emit the event up to the parent cart component when the method is called from our template.
+Once again, we will emit the event up to the parent cart component when the method is called in our template.
 
-Let's now update our template with the `removeFromCart()` method. In our first click event where the `updateQuantity()` is called, we want to add a ternary operator to invoke the `updateQuantity()` function when the line item quantity is more than 1, otherwise invoke the `removeFromCart()` method when the quantity is 1. Commerce.js does not allow for line item quantities to be updated with a value below 1. Therefore when the line item with a quantity of 1 is decreased, the `removeFromCart()` method will be called and will remove that line item from the cart completely.
+Next, we'll want to update our `updateQuantity` function to invoke `removeFromCart()` when a line item with a quantity
+of 1 is decreased. This conveniently removes the line item from the cart when a quantity of 0 is being passed in to the
+`commerce.cart.update()` method.
 
-Secondly, we will attach the `removeFromCart()` method to an isolated **Remove** button as well. When this click event is fired, the associated line item will be removed from the cart object.
+```js
+  methods: {
+    updateQuantity(quantity) {
+      if (quantity < 1) {
+          return this.removeFromCart();
+      }
+      this.$emit('update-quantity', this.item.id, quantity);
+    },
+  }
+```
+
+Let's now attach the `removeFromCart()` method to an isolated **Remove** button as well. When this click event is fired,
+the associated line item will be removed from the cart object.
 
 ```html
 <!-- CartItem.vue -->
@@ -562,9 +599,9 @@ Secondly, we will attach the `removeFromCart()` method to an isolated **Remove**
     <div class="cart-item__details">
       <h4 class="cart-item__details-name">{{ item.name }}</h4>
       <div class="cart-item__details-qty">
-        <button type="button" @click="() => item.quantity > 1 ? updateQuantity(item.quantity - 1) : removeFromCart()">-</button>
+        <button @click="() => item.quantity > 1 ? updateQuantity(item.quantity - 1) : removeFromCart()">-</button>
         <p>{{ item.quantity }}</p>
-        <button type="button" @click="() => updateQuantity(item.quantity + 1)">+</button>
+        <button @click="() => updateQuantity(item.quantity + 1)">+</button>
       </div>
       <p class="cart-item__details-price">{{ item.line_total.formatted_with_symbol }}</p>
     </div>
@@ -573,7 +610,8 @@ Secondly, we will attach the `removeFromCart()` method to an isolated **Remove**
 </template>
 ```
 
-In our `Cart.vue` component, we will need to continue to emit the `remove-from-cart` method up to the main `App.js` parent component.
+In our `Cart.vue` component, we will need to continue to emit the `remove-from-cart` method up to the main `App.js`
+parent component.
 
 ```html
 <!-- Cart.vue -->
@@ -588,7 +626,9 @@ In our `Cart.vue` component, we will need to continue to emit the `remove-from-c
 />
 ```
 
-Finally in `App.js`, let's create the event handler to make the request to the `commerce.cart.remove()` endpoint to execute our `remove-from-cart` event. The `commerce.cart.remove()` method takes in the required `lineItemId` parameter and once the promise is resolved, the returned cart object is one less of the removed line item.
+Finally in `App.js`, let's create the event handler to make the request to the `commerce.cart.remove()` endpoint to
+execute our `remove-from-cart` event. The `commerce.cart.remove()` method takes in the required `lineItemId` parameter
+and once the promise is resolved, the returned cart object is one less of the removed line item.
 
 ```js
 // App.js
@@ -597,7 +637,9 @@ Finally in `App.js`, let's create the event handler to make the request to the `
  * Removes line item from cart
  * https://commercejs.com/docs/sdk/cart/#remove-from-cart
  * 
- * @param {string} lineItemId ID of the cart line item being removed
+ * @param {string} id of the cart line item being removed
+ * 
+ * @return {object} updated cart object
  */ 
 handleRemoveFromCart(lineItemId) {
   this.$commerce.cart.remove(lineItemId).then((resp) => {
@@ -652,17 +694,22 @@ With a successful request, your response should look like the below abbreviated 
 
 ### 6. Clear cart items
 
-Lastly, the cart action we will be going over in this guide is the `commerce.cart.empty()` [method](https://commercejs.com/docs/sdk/cart#empty-cart). The `empty()` at the Cart endpoint completely clears the contents of the current cart in session.
+Lastly, the cart action we will be going over in this guide is the `commerce.cart.empty()`
+[method](https://commercejs.com/docs/sdk/cart#empty-cart). The `empty()` at the Cart endpoint completely clears the
+contents of the current cart in session.
 
-Since removal of the entire cart contents will happen at the cart component level, we will intercept an event for it directly in the cart UI. Lets get back to our `Cart.vue` component and add a click event to execute a helper function we will call `emptyCart()`. Underneath the component instance of `CartItem` add in the button below:
+Since removal of the entire cart contents will happen at the cart component level, we will intercept an event for it
+directly in the cart UI. Lets get back to our `Cart.vue` component and add a click event to execute a helper function we
+will call `emptyCart()`. Underneath the component instance of `CartItem` add in the button below:
 
 ```html
 <!-- Cart.vue -->
 
-<button v-if="cart.line_items.length" @click="emptyCart">Empty cart</button>
+ <button v-if="cart.line_items.length" @click="emptyCart()">Empty cart</button>
 ```
 
-The `v-if` Vue directive will first check if there are any items inside the cart and if so, the **Empty cart** button will render.
+The `v-if` Vue directive will first check if there are any items inside the cart and if so, the **Empty cart** will
+render.
 
 Add a new method in the `Cart.vue` component to emit the `empty-cart` method up to `App.js`.
 
@@ -674,7 +721,8 @@ emptyCart() {
 },
 ```
 
-Now in `App.js`, we will create an event handler to handle the `empty-cart` event. The `commerce.cart.empty()` method does not require any arguments as calling the function simply deletes all the items in the cart.
+Now in `App.js`, we will create an event handler to handle the `emptyCart()` method. The `commerce.cart.empty()` does
+not require any parameters as calling the function simply deletes all the items in the cart.
 
 ```js
 // App.js
@@ -682,6 +730,7 @@ Now in `App.js`, we will create an event handler to handle the `empty-cart` even
 /**
   * Empties cart contents
   * https://commercejs.com/docs/sdk/cart/#remove-from-cart
+  * @return {object} updated cart object
   */ 
 handleEmptyCart() {
   this.$commerce.cart.empty().then((resp) => {
@@ -705,7 +754,7 @@ Now with the handler function created, let's hook it up to our cart component.
 />
 ```
 
-With a successful request to the cart endpoint, your response will look similar to the below JSON data:
+With a successful request to the cart endpoint, your response will look similar to the below json data:
 
 ```json
 {
@@ -737,4 +786,5 @@ With a successful request to the cart endpoint, your response will look similar 
 }
 ```
 
-And there you have it! We have now wrapped up part two of the Commerce.js Vue.js guide on implementing cart functionality in our application. The next guide will continue from this one to add a checkout flow.
+And there you have it, we have now wrapped up part two of the Commerce.js Vue.js guide on implementing cart
+functionalities to our application. The next guide will continue from this one to add a checkout flow.
