@@ -10,7 +10,7 @@
             </div>
             <p class="cart-item__details-price">{{ item.line_total.formatted_with_symbol }}</p>
         </div>
-        <button class="cart-item__remove" @click="removeFromCart()">Remove</button>
+        <button class="cart-item__remove" @click="removeFromCart">Remove</button>
     </div>
 </template>
 
@@ -19,16 +19,24 @@ export default {
     name: 'CartItem',
     props: ['item'],
     methods: {
+        /**
+         * Update the quantity of the current line item in the cart
+         *
+         * @param {number} quantity The new quantity for the line item
+         */
         updateQuantity(quantity) {
             if (quantity < 1) {
                 return this.removeFromCart();
             }
             this.$emit('update-quantity', this.item.id, quantity);
         },
+        /**
+         * Remove the current line item from the cart
+         */
         removeFromCart() {
             this.$emit('remove-from-cart', this.item.id);
-        }
-    }
+        },
+    },
 }
 </script>
 
