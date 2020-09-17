@@ -9,7 +9,7 @@
             </div>
             <button
                 class="product__btn"
-                @click="addToCart()"
+                @click="addToCart"
             >
                 Quick add
             </button>
@@ -22,6 +22,10 @@ export default {
   name: 'ProductsItem',
   props: ['product'],
   methods: {
+      /**
+       * Add the current item to the cart
+       * https://commercejs.com/docs/sdk/cart#add-to-cart
+       */
       addToCart() {
         this.$emit('add-to-cart', { productId: this.product.id, quantity: 1 });
       }
