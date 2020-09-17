@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div @click="showCart = !showCart">
+        <div @click="toggleCart()" role="button" tabindex="0">
             <button v-if="!showCart">Cart <span v-if="cart.line_items.length">{{cart.total_items}}</span></button>
             <button v-else>Close</button>
         </div>
@@ -8,12 +8,12 @@
             <h5 class="cart__heading">Your shopping cart</h5>
             <div v-if="cart.line_items.length">
                 <CartItem
-                    v-for="lineItem in cart.line_items"
-                    :key="lineItem.id"
-                    :item="lineItem"
-                    @update-quantity="handleUpdateQuantity"
-                    @remove-from-cart="$emit('remove-from-cart', $event)"
-                    class="cart__inner"
+                  v-for="lineItem in cart.line_items"
+                  :key="lineItem.id"
+                  :item="lineItem"
+                  @update-quantity="handleUpdateQuantity"
+                  @remove-from-cart="$emit('remove-from-cart', $event)"
+                  class="cart__inner"
                 />
                 <div class="cart__total">
                     <p class="cart__total-title">Subtotal:</p>
@@ -36,39 +36,45 @@
 import CartItem from './CartItem';
 
 export default {
-    name: 'Cart',
-    components: {
-        CartItem,
+  name: 'Cart',
+  components: {
+      CartItem,
+  },
+  props: ['cart'],
+  data() {
+    return {
+      showCart: false,
+    }
+  },
+  methods: {
+    /**
+     * Updates line_items in cart
+     * https://commercejs.com/docs/sdk/cart/#update-cart
+     *
+     * @param {string} lineItemId ID of the cart line item being updated
+     * @param {number} quantity New line item quantity to update
+     */
+    handleUpdateQuantity(lineItemId, quantity) {
+      this.$commerce.cart.update(lineItemId, { quantity }).then((resp) => {
+        this.cart = resp.cart
+      }).catch((error) => {
+        console.log('There was an error updating the cart items', error);
+      });
     },
-    props: ['cart'],
-    data() {
-        return {
-            showCart: false,
-        }
+    /**
+     * Empty the entire cart
+     * https://commercejs.com/docs/sdk/cart#empty-cart
+     */
+    emptyCart() {
+      this.$emit('empty-cart');
     },
-    methods: {
-        /**
-         * Updates line_items in cart
-         * https://commercejs.com/docs/sdk/cart/#update-cart
-         * 
-         * @param {string} lineItemId ID of the cart line item being updated
-         * @param {number} quantity New line item quantity to update
-         */ 
-        handleUpdateQuantity(lineItemId, quantity) {
-            this.$commerce.cart.update(lineItemId, { quantity }).then((resp) => {
-                this.cart = resp.cart
-            }).catch((error) => {
-                console.log('There was an error updating the cart items', error);
-            });
-        },
-        /**
-         * Empty the entire cart
-         * https://commercejs.com/docs/sdk/cart#empty-cart
-         */
-        emptyCart() {
-            this.$emit('empty-cart');
-        },
-     }
+    /**
+     * Toggles the cart
+     */
+    toggleCart() {
+      this.showCart = !this.showCart;
+    }
+  }
 }
 </script>
 

@@ -151,7 +151,7 @@ event, a button click in this case. We will name our custom callback function `a
 
 <button
   class="product__btn"
-  @click="addToCart()"
+  @click="addToCart"
 >
   Quick add
 </button>
@@ -174,7 +174,7 @@ to pass in the product ID and the quantity of that product.
 
 methods: {
     addToCart() {
-      this.$emit('add-to-cart', { productId: this.product.id, quantity: 1 });
+      this.$emit('add-to-cart', this.product.id, 1);
     }
 }
 ```
@@ -218,15 +218,13 @@ will be properties that will resolve into the cart object.
 /**
  * Adds a product to the current cart in session
  * https://commercejs.com/docs/sdk/cart/#add-to-cart
- * 
- * @param {string} productId of the product being added
- * @param {number} quantity of the product being added 
- * 
- * @return {object} updated cart object with new line items
+ *
+ * @param {string} productId The ID of the product being added
+ * @param {number} quantity The quantity of the product being added
  */ 
-handleAddToCart({ productId, quantity }) {
-  this.$commerce.cart.add(productId, quantity).then((resp) => {
-    this.cart = resp.cart;
+handleAddToCart(productId, quantity) {
+  this.$commerce.cart.add(productId, quantity).then((item) => {
+    this.cart = item.cart;
   }).catch((error) => {
     console.log('There is an error fetching the cart', error);
   });
@@ -449,10 +447,8 @@ methods: {
    * Updates line_items in cart
    * https://commercejs.com/docs/sdk/cart/#update-cart
    *  
-   * @param {string} id of the cart line item being updated
-   * @param {number} quantity (new) of the line item to update
-   * 
-   * @return {object} updated cart object
+   * @param {string} lineItemId ID of the cart line item being updated
+   * @param {number} quantity New line item quantity to update
    */ 
   handleUpdateQuantity(lineItemId, quantity) {
     this.$commerce.cart.update(lineItemId, { quantity }).then((resp) => {
@@ -599,13 +595,13 @@ the associated line item will be removed from the cart object.
     <div class="cart-item__details">
       <h4 class="cart-item__details-name">{{ item.name }}</h4>
       <div class="cart-item__details-qty">
-        <button @click="() => item.quantity > 1 ? updateQuantity(item.quantity - 1) : removeFromCart()">-</button>
+        <button @click="() => updateQuantity(item.quantity - 1)">-</button>
         <p>{{ item.quantity }}</p>
         <button @click="() => updateQuantity(item.quantity + 1)">+</button>
       </div>
       <p class="cart-item__details-price">{{ item.line_total.formatted_with_symbol }}</p>
     </div>
-    <button class="cart-item__remove" @click="removeFromCart()">Remove</button>
+    <button class="cart-item__remove" @click="removeFromCart">Remove</button>
   </div>
 </template>
 ```
@@ -636,16 +632,14 @@ and once the promise is resolved, the returned cart object is one less of the re
 /**
  * Removes line item from cart
  * https://commercejs.com/docs/sdk/cart/#remove-from-cart
- * 
- * @param {string} id of the cart line item being removed
- * 
- * @return {object} updated cart object
- */ 
+ *
+ * @param {string} lineItemId ID of the line item being removed
+ */
 handleRemoveFromCart(lineItemId) {
   this.$commerce.cart.remove(lineItemId).then((resp) => {
     this.cart = resp.cart;
   }).catch((error) => {
-    console.log('There is an error updating the cart items', error);
+    console.log('There was an error updating the cart items', error);
   });
 },
 ```
@@ -655,7 +649,6 @@ Update your template with the `removeFromCart()` event attribute in the Cart com
 ```html
 <Cart
   :cart="cart"
-  :showCart="showCart"
   @remove-from-cart="handleRemoveFromCart"
 />
 ```
@@ -700,12 +693,12 @@ contents of the current cart in session.
 
 Since removal of the entire cart contents will happen at the cart component level, we will intercept an event for it
 directly in the cart UI. Lets get back to our `Cart.vue` component and add a click event to execute a helper function we
-will call `emptyCart()`. Underneath the component instance of `CartItem` add in the button below:
+will call `emptyCart()`. Underneath the component instance of `CartItem`, add in the button below:
 
 ```html
 <!-- Cart.vue -->
 
- <button v-if="cart.line_items.length" @click="emptyCart()">Empty cart</button>
+ <button v-if="cart.line_items.length" @click="emptyCart">Empty cart</button>
 ```
 
 The `v-if` Vue directive will first check if there are any items inside the cart and if so, the **Empty cart** will
@@ -728,10 +721,9 @@ not require any parameters as calling the function simply deletes all the items 
 // App.js
 
 /**
-  * Empties cart contents
-  * https://commercejs.com/docs/sdk/cart/#remove-from-cart
-  * @return {object} updated cart object
-  */ 
+ * Empties cart contents
+ * https://commercejs.com/docs/sdk/cart/#remove-from-cart
+ */
 handleEmptyCart() {
   this.$commerce.cart.empty().then((resp) => {
     this.cart = resp.cart;
@@ -748,7 +740,6 @@ Now with the handler function created, let's hook it up to our cart component.
 
 <Cart
   :cart="cart"
-  :showCart="showCart"
   @remove-from-cart="handleRemoveFromCart"
   @empty-cart="handleEmptyCart"
 />

@@ -27,7 +27,7 @@ export default {
        * https://commercejs.com/docs/sdk/cart#add-to-cart
        */
       addToCart() {
-        this.$emit('add-to-cart', { productId: this.product.id, quantity: 1 });
+        this.$emit('add-to-cart', this.product.id, 1);
       }
   }
 

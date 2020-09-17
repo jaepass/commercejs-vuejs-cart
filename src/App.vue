@@ -37,7 +37,7 @@ export default {
     /**
      * Fetch products data from Chec and stores in the products data object.
      * https://commercejs.com/docs/sdk/products
-     * 
+     *
      * @return {object} products data object
      */
     fetchProducts() {
@@ -50,7 +50,7 @@ export default {
     /**
      * Retrieve the current cart or create one if one does not exist
      * https://commercejs.com/docs/sdk/cart
-     * 
+     *
      * @return {object} cart object
      */
     fetchCart() {
@@ -63,14 +63,13 @@ export default {
     /**
      * Adds a product to the current cart in session
      * https://commercejs.com/docs/sdk/cart/#add-to-cart
-     * 
-     * @param {object} arguments 
-     * @param {string} arguments.productId The ID of the product being added
-     * @param {number} arguments.quantity The quantity of the product being added 
-     */ 
-    handleAddToCart({ productId, quantity }) {
-      this.$commerce.cart.add(productId, quantity).then((resp) => {
-        this.cart = resp.cart;
+     *
+     * @param {string} productId The ID of the product being added
+     * @param {number} quantity The quantity of the product being added
+     */
+    handleAddToCart(productId, quantity) {
+      this.$commerce.cart.add(productId, quantity).then((item) => {
+        this.cart = item.cart;
       }).catch((error) => {
         console.log('There was an error fetching the cart', error);
       });
@@ -78,9 +77,9 @@ export default {
     /**
      * Removes line item from cart
      * https://commercejs.com/docs/sdk/cart/#remove-from-cart
-     * 
+     *
      * @param {string} lineItemId ID of the line item being removed
-     */ 
+     */
     handleRemoveFromCart(lineItemId) {
       this.$commerce.cart.remove(lineItemId).then((resp) => {
         this.cart = resp.cart;
@@ -91,7 +90,7 @@ export default {
     /**
      * Empties cart contents
      * https://commercejs.com/docs/sdk/cart/#remove-from-cart
-     */ 
+     */
     handleEmptyCart() {
       this.$commerce.cart.empty().then((resp) => {
         this.cart = resp.cart;
