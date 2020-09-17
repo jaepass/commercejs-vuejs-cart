@@ -64,10 +64,9 @@ export default {
      * Adds a product to the current cart in session
      * https://commercejs.com/docs/sdk/cart/#add-to-cart
      * 
-     * @param {string} id of the product being added
-     * @param {number} quantity of the product being added 
-     * 
-     * @return {object} updated cart object with new line items
+     * @param {object} arguments 
+     * @param {string} arguments.productId The ID of the product being added
+     * @param {number} arguments.quantity The quantity of the product being added 
      */ 
     handleAddToCart({ productId, quantity }) {
       this.$commerce.cart.add(productId, quantity).then((resp) => {
@@ -80,9 +79,7 @@ export default {
      * Removes line item from cart
      * https://commercejs.com/docs/sdk/cart/#remove-from-cart
      * 
-     * @param {string} id of the cart line item being removed
-     * 
-     * @return {object} updated cart object
+     * @param {string} lineItemId ID of the line item being removed
      */ 
     handleRemoveFromCart(lineItemId) {
       this.$commerce.cart.remove(lineItemId).then((resp) => {
@@ -94,8 +91,6 @@ export default {
     /**
      * Empties cart contents
      * https://commercejs.com/docs/sdk/cart/#remove-from-cart
-   
-     * @return {object} updated cart object
      */ 
     handleEmptyCart() {
       this.$commerce.cart.empty().then((resp) => {
