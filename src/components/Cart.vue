@@ -1,7 +1,7 @@
 <template>
     <div>
         <div @click="toggleCart()" role="button" tabindex="0">
-            <button v-if="!showCart">Cart <span v-if="cart.line_items.length">{{cart.total_items}}</span></button>
+            <button v-if="!showCart">Cart <span v-if="cart !== null">{{cart.total_items}}</span></button>
             <button v-else>Close</button>
         </div>
         <div class="cart" v-if="showCart">
