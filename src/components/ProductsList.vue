@@ -32,7 +32,7 @@ export default {
   @apply block m-12;
 
   @screen md {
-    @apply grid grid-cols-3 grid-rows-3 m-40; 
+    @apply grid grid-cols-3 grid-rows-3 m-40;
   }
 }
 
