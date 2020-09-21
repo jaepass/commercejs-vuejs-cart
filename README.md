@@ -777,5 +777,9 @@ With a successful request to the cart endpoint, your response will look similar 
 }
 ```
 
+## That's it!
+
 And there you have it, we have now wrapped up part two of the Commerce.js Vue.js guide on implementing cart
 functionalities to our application. The next guide will continue from this one to add a checkout flow.
+
+You can find the full finished code in [GitHub here](https://github.com/jaepass/commercejs-vuejs-cart)!
