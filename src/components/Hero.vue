@@ -1,7 +1,11 @@
 <template>
   <div class="hero">
     <div class="hero__text">
-      <h1>{{merchant.business_name}}</h1>
+      <router-link to="/">
+        <h1>
+          {{ merchant.business_name }}
+        </h1>
+      </router-link>
     </div>
   </div>
 </template>
